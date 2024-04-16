@@ -118,4 +118,5 @@ dummy! {
     GetCurBattleInfo,
     GetPhoneData,
     PlayerLoginFinish,
+    InteractProp
 }

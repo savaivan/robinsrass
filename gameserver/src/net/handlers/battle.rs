@@ -100,9 +100,7 @@ pub async fn on_start_cocoon_stage_cs_req(
 
         battle_info.ichnbmifjdi.insert(1, battle_target);
         for i in 2..=4 {
-            battle_info
-                .ichnbmifjdi
-                .insert(i, Hbinjjdphdo::default());
+            battle_info.ichnbmifjdi.insert(i, Hbinjjdphdo::default());
         }
         battle_info.ichnbmifjdi.insert(
             5,
@@ -125,23 +123,21 @@ pub async fn on_start_cocoon_stage_cs_req(
 
     //  SU
     if player.battle_config.battle_type == BattleType::SU {
-        battle_info
-            .mpobegkcikn
-            .push(Npjnkmmjfdf {
-                chgdaadjepi: player.battle_config.path_resonance_id,
-                status: Some(Agpocmnmmdi {
-                    sp: Some(AmountInfo {
-                        cur_amount: 10_000,
-                        max_amount: 10_000,
-                    }),
+        battle_info.mpobegkcikn.push(Npjnkmmjfdf {
+            chgdaadjepi: player.battle_config.path_resonance_id,
+            status: Some(Agpocmnmmdi {
+                sp: Some(AmountInfo {
+                    cur_amount: 10_000,
+                    max_amount: 10_000,
                 }),
-                ..Default::default()
-            })
+            }),
+            ..Default::default()
+        })
     }
 
     // monsters
     battle_info.monster_wave_list = Monster::to_scene_monster_waves(&player.battle_config.monsters);
-   
+
     let rsp = StartCocoonStageScRsp {
         retcode: 0,
         prop_entity_id: body.prop_entity_id,
@@ -309,9 +305,17 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
         ..Default::default()
     };
 
-    if request.hjopkcdlmln.len() > 0 && request.oknicldeddl <= 4 {
-        resp.battle_info = Some(battle_info)
+    let targets = request
+        .jpieajikioh
+        .iter()
+        .filter(|id| **id > 20_000 || **id < 10)
+        .collect::<Vec<_>>();
+
+    if targets.is_empty() {
+        return session.send(CMD_SCENE_CAST_SKILL_SC_RSP, resp).await;
     }
+
+    resp.battle_info = Some(battle_info);
 
     session.send(CMD_SCENE_CAST_SKILL_SC_RSP, resp).await?;
 

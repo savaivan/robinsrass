@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     net::{
-        tools::{AvatarJson, JsonData},
+        tools::{AvatarJson, JsonData, Position},
         tools_res::{PropState, GAME_RESOURCES},
     },
     util,
@@ -80,71 +80,81 @@ pub async fn on_lckgkdehclb(session: &mut PlayerSession, request: &Lckgkdehclb) 
 
 // getscenemapinfocsreq
 pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) -> Result<()> {
-    let player = JsonData::load().await;
+    let mut map_infos = Vec::<Fjniajephmj>::new();
 
-    let back = vec![
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-        26, 27, 28, 29, 30, 31, 32, 33, 34, 0,
-    ];
+    for entry_id in &request.dmkkkfnkofh {
+        let mut map_info = Fjniajephmj {
+            retcode: 0,
+            dcbdhkkkpgd: vec![
+                Gbiimoglajl {
+                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypeNormal.into(),
+                    ..Default::default()
+                },
+                Gbiimoglajl {
+                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypePuzzle.into(),
+                    ..Default::default()
+                },
+                Gbiimoglajl {
+                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypeChallenge.into(),
+                    ..Default::default()
+                },
+            ],
+            entry_id: *entry_id,
+            ..Default::default()
+        };
 
-    let mut map_info = Fjniajephmj {
-        retcode: 0,
-        // lighten section list
-        phicefeaigb: back.clone(),
-        // maze chest
-        dcbdhkkkpgd: vec![
-            Gbiimoglajl {
-                gommoeicmjg: Kihbdaniehp::MapInfoChestTypeNormal.into(),
-                ..Default::default()
-            },
-            Gbiimoglajl {
-                gommoeicmjg: Kihbdaniehp::MapInfoChestTypePuzzle.into(),
-                ..Default::default()
-            },
-            Gbiimoglajl {
-                gommoeicmjg: Kihbdaniehp::MapInfoChestTypeChallenge.into(),
-                ..Default::default()
-            },
-        ],
-
-        ..Default::default()
-    };
-
-    if let Some((level, enterance, _)) = player.get_level_group(request.dmkkkfnkofh[0]).await {
-        // add teleports
-        for teleport in &level.teleports {
-            map_info.ojlnmnehgai.push(*teleport.0)
+        for i in 0..100 {
+            map_info.phicefeaigb.push(i)
         }
 
-        // prop
-        for prop in &level.props {
-            let group = Gecjjlmabhp {
-                group_id: prop.group_id,
-                ..Default::default()
-            };
-            if !map_info.pmolfbcbfpe.contains(&group) {
-                map_info.pmolfbcbfpe.push(group);
+        let group_config = GAME_RESOURCES
+            .map_entrance
+            .get(&entry_id)
+            .map(|v| {
+                GAME_RESOURCES
+                    .level_group
+                    .get(&format!("P{}_F{}", v.plane_id, v.floor_id))
+            })
+            .flatten();
+
+        if let Some(level) = group_config {
+            // add teleports
+            for teleport in &level.teleports {
+                map_info.ojlnmnehgai.push(*teleport.0)
             }
 
-            map_info.cgkfbhoadpc.push(Kangcibfhee {
-                group_id: prop.group_id,
-                state: if prop.prop_state_list.contains(&PropState::CheckPointEnable) {
-                    PropState::CheckPointEnable as u32
-                } else {
-                    prop.state.clone() as u32
-                },
-                ifjocipnpgd: prop.id as u32,
-            });
+            for (group_id, group) in &level.group_items {
+                map_info.pmolfbcbfpe.push(Gecjjlmabhp {
+                    group_id: *group_id,
+                    ..Default::default()
+                });
+
+                // prop
+                for prop in &group.props {
+                    map_info.cgkfbhoadpc.push(Kangcibfhee {
+                        group_id: prop.group_id,
+                        state: if prop.prop_state_list.contains(&PropState::CheckPointEnable) {
+                            PropState::CheckPointEnable as u32
+                        } else {
+                            prop.state.clone() as u32
+                        },
+                        ifjocipnpgd: prop.id as u32,
+                    });
+                }
+            }
         }
 
-        map_info.entry_id = enterance.id;
+        // Debug
+        // tokio::fs::write(format!("./text-{}.txt", entry_id), format!("{:#?}", map_info)).await?;
+        map_infos.push(map_info)
     }
+
     sesison
         .send(
             CMD_GET_SCENE_MAP_INFO_SC_RSP,
             Cegeebldbke {
                 retcode: 0,
-                mhefdgcamjl: vec![map_info],
+                mhefdgcamjl: map_infos,
                 ..Default::default()
             },
         )
@@ -241,220 +251,240 @@ async fn load_scene(
     _save: bool,
     teleport_id: Option<u32>,
 ) -> Result<SceneInfo> {
-    if let Some((level, enterance, plane)) = json.get_level_group(entry_id).await {
-        let mut position = json.position.clone();
-        if let Some(teleport_id) = teleport_id {
-            if let Some(teleport) = level.teleports.get(&teleport_id) {
-                position.x = (teleport.pos_x * 1000f64) as i32;
-                position.y = (teleport.pos_y * 1000f64) as i32;
-                position.z = (teleport.pos_z * 1000f64) as i32;
-                position.rot_y = (teleport.rot_y * 1000f64) as i32;
+    let enterance = GAME_RESOURCES
+        .map_entrance
+        .get(&entry_id)
+        .ok_or_else(|| anyhow::format_err!("Map Entrance Not Found"))?;
+
+    let plane = GAME_RESOURCES
+        .maze_plane
+        .get(&enterance.plane_id)
+        .ok_or_else(|| anyhow::format_err!("Map Plane Not Found"))?;
+
+    let group_config = GAME_RESOURCES
+        .level_group
+        .get(&format!("P{}_F{}", enterance.plane_id, enterance.floor_id))
+        .ok_or_else(|| anyhow::format_err!("Group Config Not Found"))?;
+
+    let mut position = json.position.clone();
+    if let Some(teleport_id) = teleport_id {
+        if let Some(teleport) = group_config.teleports.get(&teleport_id) {
+            let anchor = group_config
+                .group_items
+                .get(&teleport.anchor_group_id.unwrap_or_default())
+                .map(|v| v.anchors.get(&teleport.anchor_id.unwrap_or_default()))
+                .flatten();
+            if let Some(anchor) = anchor {
+                position.x = (anchor.pos_x * 1000f64) as i32;
+                position.y = (anchor.pos_y * 1000f64) as i32;
+                position.z = (anchor.pos_z * 1000f64) as i32;
+                position.rot_y = (anchor.rot_y * 1000f64) as i32;
             }
         }
+    }
 
-        let mut scene_info = SceneInfo {
-            floor_id: enterance.floor_id as u32,
-            plane_id: enterance.plane_id as u32,
-            entry_id,
-            game_mode_type: plane
-                .as_ref()
-                .map(|v| v.plane_type)
-                .unwrap_or(enterance.entrance_type) as u32,
+    let mut scene_info = SceneInfo {
+        floor_id: enterance.floor_id as u32,
+        plane_id: enterance.plane_id as u32,
+        entry_id,
+        game_mode_type: plane.plane_type as u32,
+        pbfgagecpcd: plane.world_id,
+        ..Default::default()
+    };
 
-            pbfgagecpcd: plane.map(|v| v.world_id).unwrap_or_default(),
+    let lineup_info = AvatarJson::to_lineup_info(&json.lineups);
+    let player_pos = MotionInfo {
+        // rot
+        eiaoiankefd: Some(Vector {
+            baimdminomk: 0,
+            bemlopmcgch: position.rot_y,
+            bagloppgnpb: 0,
+        }),
+        // pos
+        aomilajjmii: Some(Vector {
+            baimdminomk: position.x,
+            bemlopmcgch: position.y,
+            bagloppgnpb: position.z,
+        }),
+    };
+
+    let mut loaded_npc: Vec<u32> = vec![];
+    let mut prop_entity_id = 10;
+    let mut npc_entity_id = 10_000;
+    let mut monster_entity_id = 20_000;
+
+    for (group_id, group) in &group_config.group_items {
+        let mut group_info = Dhkacjhaoid {
+            state: 0,
+            group_id: *group_id,
             ..Default::default()
         };
 
-        let lineup_info = AvatarJson::to_lineup_info(&json.lineups);
-        let player_pos = MotionInfo {
-            // rot
-            eiaoiankefd: Some(Vector {
-                baimdminomk: 0,
-                bemlopmcgch: position.rot_y,
-                bagloppgnpb: 0,
-            }),
-            // pos
-            aomilajjmii: Some(Vector {
-                baimdminomk: position.x,
-                bemlopmcgch: position.y,
-                bagloppgnpb: position.z,
-            }),
-        };
-
-        let mut entity_id = 10;
-
-        // LOAD PROPS
-        for prop in level.props {
-            entity_id += 1;
-
-            let prop_state = if prop.anchor_id.unwrap_or_default() > 0 {
-                8
+        // Load Props
+        for prop in &group.props {
+            let prop_state = if prop.prop_state_list.contains(&PropState::CheckPointEnable) {
+                PropState::CheckPointEnable
             } else {
-                continue; // skip non anchor prop
-                // prop.state as u32
+                prop.state.clone()
             };
-            let info = SceneEntityInfo {
+
+            prop_entity_id += 1;
+
+            let prop_position = Position {
+                x: (prop.pos_x * 1000f64) as i32,
+                y: (prop.pos_y * 1000f64) as i32,
+                z: (prop.pos_z * 1000f64) as i32,
+                rot_y: (prop.rot_y * 1000f64) as i32,
+            };
+
+            let entity_info = SceneEntityInfo {
                 inst_id: prop.id as u32,
                 group_id: prop.group_id,
-                entity_id,
-                motion: Some(MotionInfo {
-                    // pos
-                    aomilajjmii: Some(Vector {
-                        baimdminomk: (prop.pos_x * 1000f64) as i32,
-                        bemlopmcgch: (prop.pos_y * 1000f64) as i32,
-                        bagloppgnpb: (prop.pos_z * 1000f64) as i32,
-                    }),
-                    // rot
-                    eiaoiankefd: Some(Vector {
-                        baimdminomk: 0,
-                        bemlopmcgch: (prop.rot_y * 1000f64) as i32,
-                        bagloppgnpb: 0,
-                    }),
-                }),
+                motion: Some(prop_position.to_motion()),
                 prop: Some(ScenePropInfo {
-                    prop_id: prop.prop_id as u32,
-                    prop_state: prop_state,
+                    prop_id: prop.prop_id,
+                    prop_state: prop_state as u32,
+                    ..Default::default()
+                }),
+                entity_id: prop_entity_id,
+                ..Default::default()
+            };
+
+            group_info.entity_list.push(entity_info);
+        }
+
+        // Load NPCs
+        for npc in &group.npcs {
+            if loaded_npc.contains(&(npc.npcid as u32))
+                || json.avatars.contains_key(&(npc.npcid as u32))
+            {
+                continue;
+            }
+            npc_entity_id += 1;
+            loaded_npc.push(npc.npcid as u32);
+
+            let npc_position = Position {
+                x: (npc.pos_x * 1000f64) as i32,
+                y: (npc.pos_y * 1000f64) as i32,
+                z: (npc.pos_z * 1000f64) as i32,
+                rot_y: (npc.rot_y * 1000f64) as i32,
+            };
+
+            let info = SceneEntityInfo {
+                inst_id: npc.id as u32,
+                group_id: npc.group_id,
+                entity_id: npc_entity_id,
+                motion: Some(npc_position.to_motion()),
+                npc: Some(SceneNpcInfo {
+                    egeneneoadj: npc.npcid as u32,
                     ..Default::default()
                 }),
                 ..Default::default()
             };
 
-            if let Some(group) = scene_info
-                .chhmmbdhjpg
-                .iter_mut()
-                .find(|v| v.group_id == prop.group_id)
-            {
-                group.entity_list.push(info)
-            } else {
-                let mut group_info = Dhkacjhaoid {
-                    state: 0,
-                    group_id: prop.group_id,
-                    ..Default::default()
-                };
-                group_info.entity_list.push(info);
-                scene_info.chhmmbdhjpg.push(group_info);
-            }
+            group_info.entity_list.push(info);
         }
 
-        // LOAD MONSTERS
-        for monster in level.monsters {
-            entity_id += 1;
+        // Load Monsters
+        for monster in &group.monsters {
+            monster_entity_id += 1;
+            let monster_position = Position {
+                x: (monster.pos_x * 1000f64) as i32,
+                y: (monster.pos_y * 1000f64) as i32,
+                z: (monster.pos_z * 1000f64) as i32,
+                rot_y: (monster.rot_y * 1000f64) as i32,
+            };
+
+            let npc_monster = SceneNpcMonsterInfo {
+                monster_id: monster.npcmonster_id as u32,
+                event_id: monster.event_id as u32,
+                world_level: 6,
+                ..Default::default()
+            };
 
             let info = SceneEntityInfo {
                 inst_id: monster.id as u32,
                 group_id: monster.group_id,
-                entity_id,
-                motion: Some(MotionInfo {
-                    // pos
-                    aomilajjmii: Some(Vector {
-                        baimdminomk: (monster.pos_x * 1000f64) as i32,
-                        bemlopmcgch: (monster.pos_y * 1000f64) as i32,
-                        bagloppgnpb: (monster.pos_z * 1000f64) as i32,
-                    }),
-                    // rot
-                    eiaoiankefd: Some(Vector {
-                        baimdminomk: 0,
-                        bemlopmcgch: (monster.rot_y * 1000f64) as i32,
-                        bagloppgnpb: 0,
-                    }),
-                }),
-                npc_monster: Some(SceneNpcMonsterInfo {
-                    monster_id: monster.npcmonster_id as u32,
-                    event_id: monster.event_id as u32,
-                    world_level: 6,
-                    ..Default::default()
-                }),
+                entity_id: monster_entity_id,
+                motion: Some(monster_position.to_motion()),
+                npc_monster: Some(npc_monster),
                 ..Default::default()
             };
 
-            if let Some(group) = scene_info
-                .chhmmbdhjpg
-                .iter_mut()
-                .find(|v| v.group_id == monster.group_id)
-            {
-                group.entity_list.push(info)
-            } else {
-                let mut group_info = Dhkacjhaoid {
-                    state: 0,
-                    group_id: monster.group_id,
-                    ..Default::default()
-                };
-                group_info.entity_list.push(info);
-                scene_info.chhmmbdhjpg.push(group_info);
-            }
+            group_info.entity_list.push(info);
         }
 
-        // load player entity
-        let mut player_group = Dhkacjhaoid {
-            state: 0,
-            group_id: 0,
-            ..Default::default()
-        };
-        for (slot, avatar_id) in &json.lineups {
-            player_group.entity_list.push(SceneEntityInfo {
-                inst_id: 0,
-                entity_id: (*slot) + 1,
-                motion: Some(MotionInfo {
-                    // pos
-                    aomilajjmii: Some(Vector {
-                        baimdminomk: json.position.x,
-                        bemlopmcgch: json.position.y,
-                        bagloppgnpb: json.position.z,
-                    }),
-                    // rot
-                    eiaoiankefd: Some(Vector {
-                        baimdminomk: 0,
-                        bemlopmcgch: json.position.rot_y,
-                        bagloppgnpb: 0,
-                    }),
-                }),
-                actor: Some(SceneActorInfo {
-                    avatar_type: AvatarType::AvatarFormalType.into(),
-                    base_avatar_id: *avatar_id,
-                    map_layer: 0,
-                    uid: 0,
-                }),
-                ..Default::default()
-            })
-        }
-        scene_info.chhmmbdhjpg.push(player_group);
-
-        if _save {
-            session
-                .send(
-                    CMD_ENTER_SCENE_BY_SERVER_SC_NOTIFY,
-                    Jdokmmikidp {
-                        scene: Some(scene_info.clone()),
-                        lineup: Some(lineup_info),
-                        ..Default::default()
-                    },
-                )
-                .await?;
-
-            session
-                .send(
-                    CMD_SCENE_ENTITY_MOVE_SC_NOTIFY,
-                    SceneEntityMoveScNotify {
-                        entity_id: 0,
-                        entry_id: entry_id,
-                        motion: Some(player_pos),
-                        ..Default::default()
-                    },
-                )
-                .await?;
-
-            json.scene.entry_id = entry_id;
-            json.scene.floor_id = enterance.floor_id as u32;
-            json.scene.plane_id = enterance.plane_id as u32;
-            json.position.x = position.x;
-            json.position.y = position.y;
-            json.position.z = position.z;
-            json.position.rot_y = position.rot_y;
-            json.save().await;
-        }
-
-        return Ok(scene_info);
+        scene_info.chhmmbdhjpg.push(group_info);
     }
 
-    Err(anyhow::format_err!("Scene Not Found"))
+    // load player entity
+    let mut player_group = Dhkacjhaoid {
+        state: 0,
+        group_id: 0,
+        ..Default::default()
+    };
+    for (slot, avatar_id) in &json.lineups {
+        player_group.entity_list.push(SceneEntityInfo {
+            inst_id: 0,
+            entity_id: (*slot) + 1,
+            motion: Some(MotionInfo {
+                // pos
+                aomilajjmii: Some(Vector {
+                    baimdminomk: json.position.x,
+                    bemlopmcgch: json.position.y,
+                    bagloppgnpb: json.position.z,
+                }),
+                // rot
+                eiaoiankefd: Some(Vector {
+                    baimdminomk: 0,
+                    bemlopmcgch: json.position.rot_y,
+                    bagloppgnpb: 0,
+                }),
+            }),
+            actor: Some(SceneActorInfo {
+                avatar_type: AvatarType::AvatarFormalType.into(),
+                base_avatar_id: *avatar_id,
+                map_layer: 0,
+                uid: 0,
+            }),
+            ..Default::default()
+        })
+    }
+    scene_info.chhmmbdhjpg.push(player_group);
+
+    if _save {
+        session
+            .send(
+                CMD_ENTER_SCENE_BY_SERVER_SC_NOTIFY,
+                Jdokmmikidp {
+                    scene: Some(scene_info.clone()),
+                    lineup: Some(lineup_info),
+                    ..Default::default()
+                },
+            )
+            .await?;
+
+        session
+            .send(
+                CMD_SCENE_ENTITY_MOVE_SC_NOTIFY,
+                SceneEntityMoveScNotify {
+                    entity_id: 0,
+                    motion: Some(player_pos),
+                    entry_id,
+                    ..Default::default()
+                },
+            )
+            .await?;
+
+        json.scene.entry_id = entry_id;
+        json.scene.floor_id = enterance.floor_id as u32;
+        json.scene.plane_id = enterance.plane_id as u32;
+        json.position.x = position.x;
+        json.position.y = position.y;
+        json.position.z = position.z;
+        json.position.rot_y = position.rot_y;
+        json.save().await;
+    }
+
+    return Ok(scene_info);
 }

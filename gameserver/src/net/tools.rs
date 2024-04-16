@@ -2,8 +2,6 @@ use proto::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
-use super::tools_res::{MapEntrance, MazePlane, SimpleLevelGroup, GAME_RESOURCES};
-
 // AVATAR
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AvatarJson {
@@ -156,9 +154,8 @@ impl AvatarJson {
         let mut lineup_info = LineupInfo {
             extra_lineup_type: ExtraLineupType::LineupNone.into(),
             name: "Squad 1".to_string(),
-            // mp: 5,
-            // leader_slot: 0,
-            // max_mp: 5,
+            njjbfegnhjc: 5,
+            bpkggopoppf: 5,
             ..Default::default()
         };
 
@@ -636,25 +633,5 @@ impl JsonData {
             .as_bytes(),
         )
         .await;
-    }
-
-    pub async fn get_level_group(
-        &self,
-        entry_id: u32,
-    ) -> Option<(SimpleLevelGroup, MapEntrance, Option<MazePlane>)> {
-        let resources = &GAME_RESOURCES;
-        let enterance = resources.map_entrance.get(&entry_id);
-
-        if let Some(enterance) = enterance {
-            let plane = resources.maze_plane.get(&enterance.plane_id);
-            if let Some(level) = resources
-                .level_group
-                .get(&format!("P{}_F{}", enterance.plane_id, enterance.floor_id))
-            {
-                return Some((level.clone(), enterance.clone(), plane.cloned()));
-            };
-        }
-
-        None
     }
 }
