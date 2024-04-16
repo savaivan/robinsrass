@@ -10,9 +10,8 @@ pub async fn on_get_all_lineup_data_cs_req(
     let lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-        // mp: 5,
-        // leader_slot: 0,
-        // max_mp: 5,
+        njjbfegnhjc: 5,
+        bpkggopoppf: 5,
         avatar_list: AvatarJson::to_lineup_avatars(&player),
         ..Default::default()
     };
@@ -37,9 +36,8 @@ pub async fn on_get_cur_lineup_data_cs_req(
         let mut lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-        // mp: 5,
-        // leader_slot: 0,
-        // max_mp: 5,
+        njjbfegnhjc: 5,
+        bpkggopoppf: 5,
         ..Default::default()
     };
 
@@ -157,8 +155,9 @@ async fn refresh_lineup(
     let lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-
         avatar_list: AvatarJson::to_lineup_avatars(&player),
+        njjbfegnhjc: 5,
+        bpkggopoppf: 5,
         ..Default::default()
     };
 
