@@ -20,7 +20,7 @@ pub async fn on_get_cur_scene_info_cs_req(
     _body: &GetCurSceneInfoCsReq,
 ) -> Result<()> {
     let mut player = JsonData::load().await;
-    let entry = player.scene.entry_id.clone();
+    let entry = player.scene.entry_id;
 
     let scene = load_scene(session, &mut player, entry, false, Option::<u32>::None).await;
 
@@ -66,14 +66,14 @@ pub async fn on_lckgkdehclb(session: &mut PlayerSession, request: &Lckgkdehclb) 
         .send(CMD_ENTER_SCENE_SC_RSP, Dummy::default())
         .await?;
 
-    let _ = load_scene(
+    load_scene(
         session,
         &mut player,
         request.entry_id,
         true,
         Some(request.maplanefddc),
     )
-    .await;
+    .await?;
 
     Ok(())
 }
@@ -107,16 +107,11 @@ pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) 
             map_info.phicefeaigb.push(i)
         }
 
-        let group_config = GAME_RESOURCES
-            .map_entrance
-            .get(&entry_id)
-            .map(|v| {
-                GAME_RESOURCES
-                    .level_group
-                    .get(&format!("P{}_F{}", v.plane_id, v.floor_id))
-            })
-            .flatten();
-
+        let group_config = GAME_RESOURCES.map_entrance.get(entry_id).and_then(|v| {
+            GAME_RESOURCES
+                .level_group
+                .get(&format!("P{}_F{}", v.plane_id, v.floor_id))
+        });
         if let Some(level) = group_config {
             // add teleports
             for teleport in &level.teleports {
@@ -138,7 +133,7 @@ pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) 
                         } else {
                             prop.state.clone() as u32
                         },
-                        ifjocipnpgd: prop.id as u32,
+                        ifjocipnpgd: prop.id,
                     });
                 }
             }
@@ -205,9 +200,7 @@ pub async fn on_scene_entity_move_cs_req(
     player.save().await;
     session
         .send(CMD_SCENE_ENTITY_MOVE_SC_RSP, Dummy::default())
-        .await?;
-
-    Ok(())
+        .await
 }
 
 pub type GetEnteredSceneCsReq = Dummy;
@@ -219,7 +212,7 @@ pub async fn on_get_entered_scene_cs_req(
         .map_entrance
         .iter()
         .filter(|(_, v)| {
-            v.finish_main_mission_list.len() > 0 || v.finish_sub_mission_list.len() > 0
+            !v.finish_main_mission_list.is_empty() || !v.finish_sub_mission_list.is_empty()
         })
         .map(|(_, v)| Lpllljogfeh {
             floor_id: v.floor_id,
@@ -235,8 +228,7 @@ pub async fn on_get_entered_scene_cs_req(
                 retcode: 0,
             },
         )
-        .await?;
-    Ok(())
+        .await
 }
 
 // getunlockteleportcsreq
@@ -272,8 +264,7 @@ async fn load_scene(
             let anchor = group_config
                 .group_items
                 .get(&teleport.anchor_group_id.unwrap_or_default())
-                .map(|v| v.anchors.get(&teleport.anchor_id.unwrap_or_default()))
-                .flatten();
+                .and_then(|v| v.anchors.get(&teleport.anchor_id.unwrap_or_default()));
             if let Some(anchor) = anchor {
                 position.x = (anchor.pos_x * 1000f64) as i32;
                 position.y = (anchor.pos_y * 1000f64) as i32;
@@ -284,8 +275,8 @@ async fn load_scene(
     }
 
     let mut scene_info = SceneInfo {
-        floor_id: enterance.floor_id as u32,
-        plane_id: enterance.plane_id as u32,
+        floor_id: enterance.floor_id,
+        plane_id: enterance.plane_id,
         entry_id,
         game_mode_type: plane.plane_type as u32,
         pbfgagecpcd: plane.world_id,
@@ -338,7 +329,7 @@ async fn load_scene(
             };
 
             let entity_info = SceneEntityInfo {
-                inst_id: prop.id as u32,
+                inst_id: prop.id,
                 group_id: prop.group_id,
                 motion: Some(prop_position.to_motion()),
                 prop: Some(ScenePropInfo {
@@ -355,13 +346,11 @@ async fn load_scene(
 
         // Load NPCs
         for npc in &group.npcs {
-            if loaded_npc.contains(&(npc.npcid as u32))
-                || json.avatars.contains_key(&(npc.npcid as u32))
-            {
+            if loaded_npc.contains(&(npc.npcid)) || json.avatars.contains_key(&(npc.npcid)) {
                 continue;
             }
             npc_entity_id += 1;
-            loaded_npc.push(npc.npcid as u32);
+            loaded_npc.push(npc.npcid);
 
             let npc_position = Position {
                 x: (npc.pos_x * 1000f64) as i32,
@@ -371,12 +360,12 @@ async fn load_scene(
             };
 
             let info = SceneEntityInfo {
-                inst_id: npc.id as u32,
+                inst_id: npc.id,
                 group_id: npc.group_id,
                 entity_id: npc_entity_id,
                 motion: Some(npc_position.to_motion()),
                 npc: Some(SceneNpcInfo {
-                    egeneneoadj: npc.npcid as u32,
+                    egeneneoadj: npc.npcid,
                     ..Default::default()
                 }),
                 ..Default::default()
@@ -396,14 +385,14 @@ async fn load_scene(
             };
 
             let npc_monster = SceneNpcMonsterInfo {
-                monster_id: monster.npcmonster_id as u32,
-                event_id: monster.event_id as u32,
+                monster_id: monster.npcmonster_id,
+                event_id: monster.event_id,
                 world_level: 6,
                 ..Default::default()
             };
 
             let info = SceneEntityInfo {
-                inst_id: monster.id as u32,
+                inst_id: monster.id,
                 group_id: monster.group_id,
                 entity_id: monster_entity_id,
                 motion: Some(monster_position.to_motion()),
@@ -477,8 +466,8 @@ async fn load_scene(
             .await?;
 
         json.scene.entry_id = entry_id;
-        json.scene.floor_id = enterance.floor_id as u32;
-        json.scene.plane_id = enterance.plane_id as u32;
+        json.scene.floor_id = enterance.floor_id;
+        json.scene.plane_id = enterance.plane_id;
         json.position.x = position.x;
         json.position.y = position.y;
         json.position.z = position.z;
@@ -486,5 +475,5 @@ async fn load_scene(
         json.save().await;
     }
 
-    return Ok(scene_info);
+    Ok(scene_info)
 }

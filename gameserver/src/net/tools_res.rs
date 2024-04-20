@@ -263,16 +263,16 @@ impl Default for PlaneType {
 #[serde(rename_all = "camelCase")]
 pub struct MazeProp {
     #[serde(rename = "ID")]
-    pub id: i64,
+    pub id: u32,
     #[serde(rename = "PropType")]
     pub prop_type: String,
     #[serde(rename = "PropStateList")]
     pub prop_state_list: Vec<PropState>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub enum PropState {
-    Closed = 0,
+    #[default] Closed = 0,
     Open = 1,
     Locked = 2,
     BridgeState1 = 3,
@@ -307,12 +307,6 @@ pub enum PropState {
     CustomState07 = 107,
     CustomState08 = 108,
     CustomState09 = 109,
-}
-
-impl Default for PropState {
-    fn default() -> Self {
-        PropState::Closed
-    }
 }
 
 pub type IntMap<T> = HashMap<u32, T>;

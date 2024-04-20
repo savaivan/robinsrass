@@ -28,7 +28,6 @@ pub struct AvatarData {
     pub skills: BTreeMap<u32, u32>,
 }
 
-#[allow(dead_code)]
 impl AvatarJson {
     pub fn to_avatar_proto(&self, lightcone: Option<&Lightcone>, relics: Vec<&Relic>) -> Avatar {
         Avatar {
@@ -105,7 +104,7 @@ impl AvatarJson {
         for buff_id in &self.techniques {
             battle_buff.push(BattleBuff {
                 wave_flag: 0xffffffff,
-                owner_index: index as u32,
+                owner_index: index,
                 level: 1,
                 id: *buff_id,
                 ..Default::default()
@@ -132,8 +131,8 @@ impl AvatarJson {
     pub fn to_lineup_avatars(player: &JsonData) -> Vec<LineupAvatar> {
         let avatar_ids = player
             .avatars
-            .iter()
-            .map(|(_, v)| &v.avatar_id)
+            .values()
+            .map(|v| &v.avatar_id)
             .collect::<Vec<_>>();
 
         player
@@ -159,7 +158,7 @@ impl AvatarJson {
             ..Default::default()
         };
 
-        for (_, id) in lineups {
+        for id in lineups.values() {
             if *id == 0 {
                 continue;
             }
@@ -194,7 +193,6 @@ pub struct Lightcone {
     pub internal_uid: u32,
 }
 
-#[allow(dead_code)]
 impl Lightcone {
     pub fn to_equipment_proto(&self) -> Equipment {
         Equipment {
@@ -208,7 +206,6 @@ impl Lightcone {
             tid: self.item_id,
             // ?
             unique_id: 2000 + self.internal_uid,
-            ..Default::default()
         }
     }
 
@@ -248,7 +245,6 @@ pub struct SubAffix {
     pub step: u32,
 }
 
-#[allow(dead_code)]
 impl Relic {
     pub fn to_relic_proto(&self) -> proto::Relic {
         proto::Relic {
@@ -312,7 +308,6 @@ pub struct Monster {
     pub max_hp: u32,
 }
 
-#[allow(dead_code)]
 impl Monster {
     fn to_scene_monster_info(&self) -> SceneMonsterParam {
         SceneMonsterParam {
@@ -322,9 +317,9 @@ impl Monster {
         }
     }
 
-    pub fn to_scene_monster_wave(wave_index: u32, monsters: &Vec<Self>) -> SceneMonsterWave {
+    pub fn to_scene_monster_wave(wave_index: u32, monsters: &[Self]) -> SceneMonsterWave {
         let mut wave_index = wave_index;
-        if wave_index <= 0 {
+        if wave_index < 1 {
             wave_index += 1;
         }
 
@@ -345,7 +340,7 @@ impl Monster {
         }
     }
 
-    pub fn to_scene_monster_waves(monsters: &Vec<Vec<Self>>) -> Vec<SceneMonsterWave> {
+    pub fn to_scene_monster_waves(monsters: &[Vec<Self>]) -> Vec<SceneMonsterWave> {
         monsters
             .iter()
             .enumerate()
@@ -386,15 +381,17 @@ impl Default for BattleConfig {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum BattleType {
-    DEFAULT = 0,
-    MOC = 1,
+    #[serde(alias = "DEFAULT")]
+    Default = 0,
+    #[serde(alias = "MOC")]
+    Moc = 1,
     PF = 2,
     SU = 3,
 }
 
 impl Default for BattleType {
     fn default() -> Self {
-        Self::DEFAULT
+        Self::Default
     }
 }
 
@@ -459,7 +456,7 @@ pub struct Position {
 
 impl Position {
     pub fn is_empty(&self) -> bool {
-        return self.x == 0 && self.y == 0 && self.z == 0;
+        self.x == 0 && self.y == 0 && self.z == 0
     }
 
     pub fn to_motion(&self) -> MotionInfo {
@@ -604,7 +601,7 @@ impl JsonData {
     }
 
     async fn verify_lineup(&mut self) {
-        if self.lineups.len() == 0 {
+        if self.lineups.is_empty() {
             self.lineups = BTreeMap::<u32, u32>::from([(0, 8006), (1, 0), (2, 0), (3, 0)])
         } else if self.lineups.len() < 4 {
             for i in self.lineups.len()..4 {

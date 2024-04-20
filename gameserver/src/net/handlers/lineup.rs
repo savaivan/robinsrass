@@ -16,7 +16,6 @@ pub async fn on_get_all_lineup_data_cs_req(
         ..Default::default()
     };
 
-
     session
         .send(
             CMD_GET_ALL_LINEUP_DATA_SC_RSP,
@@ -33,7 +32,7 @@ pub async fn on_get_cur_lineup_data_cs_req(
     _body: &GetCurLineupDataCsReq,
 ) -> Result<()> {
     let player = tools::JsonData::load().await;
-        let mut lineup = LineupInfo {
+    let mut lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
         njjbfegnhjc: 5,
@@ -43,8 +42,8 @@ pub async fn on_get_cur_lineup_data_cs_req(
 
     let avatar_ids = player
         .avatars
-        .iter()
-        .map(|(_, v)| v.avatar_id)
+        .values()
+        .map(|v| v.avatar_id)
         .collect::<Vec<_>>();
 
     let mut avatars = player
@@ -62,7 +61,6 @@ pub async fn on_get_cur_lineup_data_cs_req(
 
     lineup.avatar_list.append(&mut avatars);
 
-
     session
         .send(
             CMD_GET_CUR_LINEUP_DATA_SC_RSP,
@@ -78,30 +76,31 @@ pub async fn on_join_lineup_cs_req(
     session: &mut PlayerSession,
     body: &JoinLineupCsReq,
 ) -> Result<()> {
-
     // update lineups
     // TODO: FIX THESE SHIT
     {
-        let mut player = tools::JsonData::load().await;        
+        let mut player = tools::JsonData::load().await;
         let lineups = &mut player.lineups;
-        lineups.insert(body.slot,  if body.base_avatar_id > 8000 {
-            player.main_character as u32
-        } else  {
-            body.base_avatar_id
-        });
+        lineups.insert(
+            body.slot,
+            if body.base_avatar_id > 8000 {
+                player.main_character as u32
+            } else {
+                body.base_avatar_id
+            },
+        );
         player.save_lineup().await;
     }
 
     {
-        let player = tools::JsonData::load().await;        
+        let player = tools::JsonData::load().await;
 
-        refresh_lineup(session,&player).await?;
+        refresh_lineup(session, &player).await?;
     }
 
-    session.send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
-        .await?;
-
-    Ok(())
+    session
+        .send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
+        .await
 }
 
 pub async fn on_replace_lineup_cs_req(
@@ -109,14 +108,14 @@ pub async fn on_replace_lineup_cs_req(
     req: &ReplaceLineupCsReq,
 ) -> Result<()> {
     {
-        let mut player = tools::JsonData::load().await;        
+        let mut player = tools::JsonData::load().await;
 
         let lineups = &mut player.lineups;
         for (slot, avatar_id) in &mut *lineups {
             if let Some(lineup) = req.jkifflmenfn.get(*slot as usize) {
                 *avatar_id = if lineup.id > 8000 {
                     player.main_character as u32
-                } else  {
+                } else {
                     lineup.id
                 };
             } else {
@@ -127,35 +126,30 @@ pub async fn on_replace_lineup_cs_req(
     }
 
     {
-        let player = tools::JsonData::load().await;        
+        let player = tools::JsonData::load().await;
 
         refresh_lineup(_session, &player).await?;
     }
 
-    _session.send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
-        .await?;
-
-    Ok(())
+    _session
+        .send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
+        .await
 }
 
 pub async fn on_quit_lineup_cs_req(
     _session: &mut PlayerSession,
     _: &QuitLineupCsReq,
 ) -> Result<()> {
-    _session.send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
-        .await?;
-
-    Ok(())
+    _session
+        .send(CMD_JOIN_LINEUP_SC_RSP, JoinLineupScRsp::default())
+        .await
 }
 
-async fn refresh_lineup(
-    sess: &mut PlayerSession,
-    player: &JsonData
-) -> Result<()> {
+async fn refresh_lineup(sess: &mut PlayerSession, player: &JsonData) -> Result<()> {
     let lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-        avatar_list: AvatarJson::to_lineup_avatars(&player),
+        avatar_list: AvatarJson::to_lineup_avatars(player),
         njjbfegnhjc: 5,
         bpkggopoppf: 5,
         ..Default::default()
@@ -165,12 +159,10 @@ async fn refresh_lineup(
         CMD_SYNC_LINEUP_NOTIFY,
         SyncLineupNotify {
             lineup: Some(lineup),
-            reason_list: vec![]
+            reason_list: vec![],
         },
     )
-    .await?;
-
-    Ok(())
+    .await
 }
 
 pub async fn on_change_lineup_leader_cs_req(

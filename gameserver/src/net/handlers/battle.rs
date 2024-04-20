@@ -24,7 +24,7 @@ pub async fn on_start_cocoon_stage_cs_req(
         if **avatar_id == 0 {
             continue;
         }
-        if let Some(avatar) = player.avatars.get(&avatar_id) {
+        if let Some(avatar) = player.avatars.get(avatar_id) {
             let (battle_avatar, techs) = avatar.to_battle_avatar_proto(
                 i,
                 player
@@ -47,7 +47,7 @@ pub async fn on_start_cocoon_stage_cs_req(
     // custom stats for avatars
     for stat in &player.battle_config.custom_stats {
         for avatar in &mut battle_info.battle_avatar_list {
-            if avatar.relic_list.len() == 0 {
+            if avatar.relic_list.is_empty() {
                 avatar.relic_list.push(BattleRelic {
                     id: 61011,
                     main_affix_id: 1,
@@ -184,7 +184,7 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
         if **avatar_id == 0 {
             continue;
         }
-        if let Some(avatar) = player.avatars.get(&avatar_id) {
+        if let Some(avatar) = player.avatars.get(avatar_id) {
             let (battle_avatar, techs) = avatar.to_battle_avatar_proto(
                 i,
                 player
@@ -207,7 +207,7 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
     // custom stats for avatars
     for stat in &player.battle_config.custom_stats {
         for avatar in &mut battle_info.battle_avatar_list {
-            if avatar.relic_list.len() == 0 {
+            if avatar.relic_list.is_empty() {
                 avatar.relic_list.push(BattleRelic {
                     id: 61011,
                     main_affix_id: 1,
@@ -317,7 +317,5 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
 
     resp.battle_info = Some(battle_info);
 
-    session.send(CMD_SCENE_CAST_SKILL_SC_RSP, resp).await?;
-
-    Ok(())
+    session.send(CMD_SCENE_CAST_SKILL_SC_RSP, resp).await
 }
