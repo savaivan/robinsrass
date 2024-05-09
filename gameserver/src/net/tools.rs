@@ -535,20 +535,21 @@ pub enum MainCharacter {
     FemaleHarmony = 8006,
 }
 
+impl From<u32> for MainCharacter {
+    fn from(value: u32) -> Self {
+        match value {
+            8001 => Self::MalePyhsical,
+            8002 => Self::FemalePhysical,
+            8003 => Self::MalePreservation,
+            8004 => Self::FemalePreservation,
+            8005 => Self::MaleHarmony,
+            8006 => Self::FemaleHarmony,
+            _ => Self::FemaleHarmony,
+        }
+    }
+}
+
 impl MainCharacter {
-    // pub fn to_vec() -> Vec<MainCharacter> {
-    //     return vec![
-    //         MainCharacter::MalePyhsical,
-    //         MainCharacter::FemalePhysical,
-
-    //         MainCharacter::MalePreservation,
-    //         MainCharacter::FemalePreservation,
-
-    //         MainCharacter::MaleHarmony,
-    //         MainCharacter::FemaleHarmony
-    //     ]
-    // }
-
     pub fn get_gender(&self) -> Gender {
         if *self as u32 % 2 == 1 {
             Gender::Man
@@ -579,9 +580,11 @@ impl JsonData {
     pub async fn load() -> Self {
         let mut json: JsonData = tokio::fs::read_to_string("freesr-data.json")
             .await
-            .map(|v| serde_json::from_str(&v))
-            .expect("freesr-data.json is broken, pls redownload")
-            .expect("freesr-data.json is broken, pls redownload");
+            .map(|v| {
+                serde_json::from_str::<JsonData>(&v)
+                    .expect("freesr-data.json is broken, pls redownload")
+            })
+            .expect("failed to read freesr-data.json");
 
         let json2: JsonData2 = serde_json::from_str(
             &tokio::fs::read_to_string("persistent")

@@ -7,6 +7,7 @@ mod player;
 mod scene;
 mod tutorial;
 mod inventory;
+mod chat;
 
 use anyhow::Result;
 use paste::paste;
@@ -25,6 +26,7 @@ pub use player::*;
 pub use scene::*;
 pub use tutorial::*;
 pub use inventory::*;
+pub use chat::*;
 
 use proto::{
     Aaihejacdpk::*, Achkcddkkkj::*, Bancodieeof::*, CmdActivityType::*, CmdBattleType::*,
@@ -80,7 +82,7 @@ dummy! {
     QueryProductInfo,
     GetQuestData,
     GetQuestRecord,
-    GetFriendListInfo,
+    // GetFriendListInfo,
     GetFriendApplyListInfo,
     GetCurAssist,
     GetRogueHandbookData,

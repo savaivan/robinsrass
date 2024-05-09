@@ -280,9 +280,9 @@ trait_handler! {
     // StartChallengeScRsp 1788;
     // GetChallengeCsReq 1734;
     // BatchMarkChatEmojiScRsp 3906;
-    // SendMsgCsReq 3934;
+    Bgfjcbbfiek 3934;// SendMsgCsReq 3934;
     // GetPrivateChatHistoryScRsp 3909;
-    // GetPrivateChatHistoryCsReq 3902;
+    Komknbijgpi 3902; // GetPrivateChatHistoryCsReq 3902;
     // GetChatEmojiListScRsp 3929;
     // PrivateMsgOfflineUsersScNotify 3988;
     // MarkChatEmojiCsReq 3945;
@@ -493,7 +493,7 @@ trait_handler! {
     // GetAssistListCsReq 2961;
     // GetFriendRecommendListInfoScRsp 2939;
     // GetPlatformPlayerInfoCsReq 2965;
-    // GetFriendListInfoCsReq 2934;
+    Nhfajfplkep 2934;// GetFriendListInfoCsReq 2934;
     // SetAssistScRsp 2997;
     // SetForbidOtherApplyFriendCsReq 2992;
     // GetCurAssistCsReq 2924;

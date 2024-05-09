@@ -300,9 +300,9 @@ async fn load_scene(
     };
 
     let mut loaded_npc: Vec<u32> = vec![];
-    let mut prop_entity_id = 10;
-    let mut npc_entity_id = 10_000;
-    let mut monster_entity_id = 20_000;
+    let mut prop_entity_id = 1_000;
+    let mut npc_entity_id = 20_000;
+    let mut monster_entity_id = 30_000;
 
     for (group_id, group) in &group_config.group_items {
         let mut group_info = Dhkacjhaoid {

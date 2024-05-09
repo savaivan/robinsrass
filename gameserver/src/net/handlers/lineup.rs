@@ -156,6 +156,38 @@ async fn refresh_lineup(sess: &mut PlayerSession, player: &JsonData) -> Result<(
     };
 
     sess.send(
+        CMD_SCENE_GROUP_REFRESH_SC_NOTIFY,
+        Ljihfeagpcl {
+            kpfomkdmoce: vec![Jnofbbanolk {
+                group_id: 0,
+                state: 0,
+                kppckepfpce: 0,
+                fiiciciambe: player
+                    .lineups
+                    .iter()
+                    .map(|(idx, v)| Gffbkjofnad {
+                        fimallpbobk: 0,
+                        mggfjbdchjh: 0,
+                        glalelmdamm: Some(SceneEntityInfo {
+                            actor: Some(SceneActorInfo {
+                                avatar_type: AvatarType::AvatarFormalType.into(),
+                                base_avatar_id: *v,
+                                map_layer: 0,
+                                uid: 1337,
+                            }),
+                            entity_id: idx + 1,
+                            group_id: 0,
+                            inst_id: 0,
+                            ..Default::default()
+                        }),
+                    })
+                    .collect(),
+            }],
+        },
+    )
+    .await?;
+
+    sess.send(
         CMD_SYNC_LINEUP_NOTIFY,
         SyncLineupNotify {
             lineup: Some(lineup),

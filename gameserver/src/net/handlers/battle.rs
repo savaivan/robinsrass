@@ -308,7 +308,7 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
     let targets = request
         .jpieajikioh
         .iter()
-        .filter(|id| **id > 20_000 || **id < 10)
+        .filter(|id| **id > 30_000 || **id < 1_000)
         .collect::<Vec<_>>();
 
     if targets.is_empty() {
