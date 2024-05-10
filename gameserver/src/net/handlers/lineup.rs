@@ -10,8 +10,8 @@ pub async fn on_get_all_lineup_data_cs_req(
     let lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-        njjbfegnhjc: 5,
-        bpkggopoppf: 5,
+        mp: 5,
+        mp_max: 5,
         avatar_list: AvatarJson::to_lineup_avatars(&player),
         ..Default::default()
     };
@@ -35,8 +35,8 @@ pub async fn on_get_cur_lineup_data_cs_req(
     let mut lineup = LineupInfo {
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
-        njjbfegnhjc: 5,
-        bpkggopoppf: 5,
+        mp: 5,
+        mp_max: 5,
         ..Default::default()
     };
 
@@ -112,7 +112,7 @@ pub async fn on_replace_lineup_cs_req(
 
         let lineups = &mut player.lineups;
         for (slot, avatar_id) in &mut *lineups {
-            if let Some(lineup) = req.jkifflmenfn.get(*slot as usize) {
+            if let Some(lineup) = req.replace_slot_list.get(*slot as usize) {
                 *avatar_id = if lineup.id > 8000 {
                     player.main_character as u32
                 } else {
@@ -150,25 +150,25 @@ async fn refresh_lineup(sess: &mut PlayerSession, player: &JsonData) -> Result<(
         extra_lineup_type: ExtraLineupType::LineupNone.into(),
         name: "Squad 1".to_string(),
         avatar_list: AvatarJson::to_lineup_avatars(player),
-        njjbfegnhjc: 5,
-        bpkggopoppf: 5,
+        mp_max: 5,
+        mp: 5,
         ..Default::default()
     };
 
     sess.send(
         CMD_SCENE_GROUP_REFRESH_SC_NOTIFY,
-        Ljihfeagpcl {
-            kpfomkdmoce: vec![Jnofbbanolk {
+        Kecnjlcjefm {
+            kpjckjjpjhj: vec![Makfkmagkli {
                 group_id: 0,
                 state: 0,
-                kppckepfpce: 0,
-                fiiciciambe: player
+                kcbpdfengaa: 0,
+                hdaiklkffjh: player
                     .lineups
                     .iter()
-                    .map(|(idx, v)| Gffbkjofnad {
-                        fimallpbobk: 0,
-                        mggfjbdchjh: 0,
-                        glalelmdamm: Some(SceneEntityInfo {
+                    .map(|(idx, v)| Kbikoelgpde {
+                        kjjeiknincl: 0,
+                        cojmgafmcjm: 0,
+                        gonncekbppg: Some(SceneEntityInfo {
                             actor: Some(SceneActorInfo {
                                 avatar_type: AvatarType::AvatarFormalType.into(),
                                 base_avatar_id: *v,

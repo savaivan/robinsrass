@@ -28,14 +28,31 @@ pub use tutorial::*;
 pub use inventory::*;
 pub use chat::*;
 
+#[allow(unused_imports)]
 use proto::{
-    Aaihejacdpk::*, Achkcddkkkj::*, Bancodieeof::*, CmdActivityType::*, CmdBattleType::*,
-    CmdPlayerType::*, Cmpepmnekko::*, Cpbdjpocnai::*, Ddhbjcelmjp::*,
-    Eegmjpcijbc::*, Emhbkpkpjpa::*, Fdkapmfjgjl::*, Gaifgoihffa::*, Galijhmhgcg::*, Gdjpnkniijf::*,
-    Hfjpennlffa::*, Hmnbojnkleh::*, Ieoildlcdkb::*, Kfmpmaojchm::*, Lopidcokdih::*, Lpegmiilfjm::*,
-    Mbnnmfkffbo::*, Mkeclbphcol::*, Niinikapdpg::*, Pfokmnnfiap::*, Pjmghcfmmge::*, Pnjfenbhbhg::*,
-    Pnnbhogkeeh::*,
+    CmdActivityType::*, CmdAdventureType::*, CmdAetherDivideType::*, CmdAlleyType::*,
+    CmdArchiveType::*, CmdAvatarType::*, CmdBattleCollegeType::*, CmdBattlePassType::*,
+    CmdBattleType::*, CmdBoxingClubType::*, CmdChallengeType::*, CmdChatType::*,
+    CmdChessRogueType::*, CmdClockParkType::*, CmdContentPackageType::*, CmdDailyActiveType::*,
+    CmdDrinkMakerType::*, CmdEvolveBuildType::*, CmdExpeditionType::*,
+    CmdFantasticStoryActivityType::*, CmdFeverTimeActivityType::*, CmdFightActivityType::*,
+    CmdFightMathc3Type::*, CmdFightType::*, CmdFriendType::*, CmdGachaType::*, CmdHeartdialType::*,
+    CmdHeliobusType::*, CmdItemType::*, CmdJukeboxType::*, CmdLineupType::*, CmdLobbyType::*,
+    CmdMailType::*, CmdMapRotationType::*, CmdMatchThreeModuleType::*, CmdMatchType::*,
+    CmdMessageType::*, CmdMiscModuleType::*, CmdMissionType::*, CmdMonopolyType::*,
+    CmdMultiplayerType::*, CmdMultipleDropType::*, CmdMuseumType::*, CmdOfferingType::*,
+    CmdPamMissionType::*, CmdPhoneType::*, CmdPlayerBoardType::*, CmdPlayerReturnType::*,
+    CmdPlayerSync::*, CmdPlayerType::*, CmdPlotType::*, CmdPunkLordType::*, CmdQuestType::*,
+    CmdRaidCollectionType::*, CmdRaidType::*, CmdRedDotType::*, CmdReplayType::*,
+    CmdRndOptionType::*, CmdRogueCommonType::*, CmdRogueEndless::*, CmdRogueModifierType::*,
+    CmdRogueTournType::*, CmdRogueType::*, CmdRollShopType::*, CmdSceneType::*,
+    CmdServerPrefsType::*, CmdShopType::*, CmdSpaceZooType::*, CmdStarFightType::*,
+    CmdStoryLineType::*, CmdStrongChallengeActivityType::*, CmdTalkRewardType::*,
+    CmdTelevisionActivityType::*, CmdTextJoinType::*, CmdTrainVisitorType::*,
+    CmdTravelBrochureType::*, CmdTreasureDungeonType::*, CmdTutorialType::*, CmdWaypointType::*,
+    CmdWolfBroType::*,
 };
+
 
 macro_rules! dummy {
     ($($cmd:ident),* $(,)*) => {
@@ -102,7 +119,7 @@ dummy! {
     GetCurChallenge,
     GetRogueInfo,
     GetExpeditionData,
-    GetRogueDialogueEventData,
+    // GetRogueDialogueEventData,
     GetJukeboxData,
     SyncClientResVersion,
     DailyFirstMeetPam,

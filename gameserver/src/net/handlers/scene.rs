@@ -58,7 +58,10 @@ pub async fn on_get_cur_scene_info_cs_req(
 }
 
 // enterscene
-pub async fn on_lckgkdehclb(session: &mut PlayerSession, request: &Lckgkdehclb) -> Result<()> {
+pub async fn on_enter_scene_cs_req(
+    session: &mut PlayerSession,
+    request: &EnterSceneCsReq,
+) -> Result<()> {
     let mut player = JsonData::load().await;
 
     // send packet first
@@ -71,7 +74,7 @@ pub async fn on_lckgkdehclb(session: &mut PlayerSession, request: &Lckgkdehclb) 
         &mut player,
         request.entry_id,
         true,
-        Some(request.maplanefddc),
+        Some(request.dehbihbbbgo),
     )
     .await?;
 
@@ -79,23 +82,26 @@ pub async fn on_lckgkdehclb(session: &mut PlayerSession, request: &Lckgkdehclb) 
 }
 
 // getscenemapinfocsreq
-pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) -> Result<()> {
-    let mut map_infos = Vec::<Fjniajephmj>::new();
+pub async fn on_get_scene_map_info_cs_req(
+    sesison: &mut PlayerSession,
+    request: &GetSceneMapInfoCsReq,
+) -> Result<()> {
+    let mut map_infos = Vec::<SceneMapInfo>::new();
 
-    for entry_id in &request.dmkkkfnkofh {
-        let mut map_info = Fjniajephmj {
+    for entry_id in &request.entry_id_list {
+        let mut map_info = SceneMapInfo {
             retcode: 0,
-            dcbdhkkkpgd: vec![
-                Gbiimoglajl {
-                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypeNormal.into(),
+            chest_info_list: vec![
+                ChestInfo {
+                    fmangokfagc: MapInfoChestType::Normal.into(),
                     ..Default::default()
                 },
-                Gbiimoglajl {
-                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypePuzzle.into(),
+                ChestInfo {
+                    fmangokfagc: MapInfoChestType::Puzzle.into(),
                     ..Default::default()
                 },
-                Gbiimoglajl {
-                    gommoeicmjg: Kihbdaniehp::MapInfoChestTypeChallenge.into(),
+                ChestInfo {
+                    fmangokfagc: MapInfoChestType::Challenge.into(),
                     ..Default::default()
                 },
             ],
@@ -104,7 +110,7 @@ pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) 
         };
 
         for i in 0..100 {
-            map_info.phicefeaigb.push(i)
+            map_info.lighten_section_list.push(i)
         }
 
         let group_config = GAME_RESOURCES.map_entrance.get(entry_id).and_then(|v| {
@@ -115,47 +121,43 @@ pub async fn on_fkjoeabiioe(sesison: &mut PlayerSession, request: &Fkjoeabiioe) 
         if let Some(level) = group_config {
             // add teleports
             for teleport in &level.teleports {
-                map_info.ojlnmnehgai.push(*teleport.0)
+                map_info.unlock_teleport_list.push(*teleport.0)
             }
 
             for (group_id, group) in &level.group_items {
-                map_info.pmolfbcbfpe.push(Gecjjlmabhp {
+                map_info.maze_group_list.push(MazeGroup {
                     group_id: *group_id,
                     ..Default::default()
                 });
 
                 // prop
                 for prop in &group.props {
-                    map_info.cgkfbhoadpc.push(Kangcibfhee {
+                    map_info.maze_prop_list.push(MazePropState {
                         group_id: prop.group_id,
                         state: if prop.prop_state_list.contains(&PropState::CheckPointEnable) {
                             PropState::CheckPointEnable as u32
                         } else {
                             prop.state.clone() as u32
                         },
-                        ifjocipnpgd: prop.id,
+                        config_id: prop.id,
                     });
                 }
             }
         }
 
-        // Debug
-        // tokio::fs::write(format!("./text-{}.txt", entry_id), format!("{:#?}", map_info)).await?;
         map_infos.push(map_info)
     }
 
     sesison
         .send(
             CMD_GET_SCENE_MAP_INFO_SC_RSP,
-            Cegeebldbke {
+            GetSceneMapInfoScRsp {
                 retcode: 0,
-                mhefdgcamjl: map_infos,
+                map_info_list: map_infos,
                 ..Default::default()
             },
         )
-        .await?;
-
-    Ok(())
+        .await
 }
 
 lazy_static! {
@@ -186,13 +188,13 @@ pub async fn on_scene_entity_move_cs_req(
         }
 
         if let Some(motion) = &entity.motion {
-            if let Some(pos) = &motion.aomilajjmii {
-                player.position.x = pos.baimdminomk;
-                player.position.y = pos.bemlopmcgch;
-                player.position.z = pos.bagloppgnpb;
+            if let Some(pos) = &motion.pos {
+                player.position.x = pos.x;
+                player.position.y = pos.y;
+                player.position.z = pos.z;
             }
-            if let Some(rot) = &motion.eiaoiankefd {
-                player.position.rot_y = rot.bemlopmcgch;
+            if let Some(rot) = &motion.rot {
+                player.position.rot_y = rot.y;
             }
         }
     }
@@ -214,7 +216,7 @@ pub async fn on_get_entered_scene_cs_req(
         .filter(|(_, v)| {
             !v.finish_main_mission_list.is_empty() || !v.finish_sub_mission_list.is_empty()
         })
-        .map(|(_, v)| Lpllljogfeh {
+        .map(|(_, v)| Hhglkmjngeg {
             floor_id: v.floor_id,
             plane_id: v.plane_id,
         })
@@ -223,17 +225,12 @@ pub async fn on_get_entered_scene_cs_req(
     session
         .send(
             CMD_GET_ENTERED_SCENE_SC_RSP,
-            Mkgidalegbd {
-                lejonbbgdnn: scenes,
+            Fchnfpafjce {
+                npbjclegekf: scenes,
                 retcode: 0,
             },
         )
         .await
-}
-
-// getunlockteleportcsreq
-pub async fn on_kkbapmgmmcb(_session: &mut PlayerSession, _request: &Kkbapmgmmcb) -> Result<()> {
-    Ok(())
 }
 
 async fn load_scene(
@@ -278,24 +275,26 @@ async fn load_scene(
         floor_id: enterance.floor_id,
         plane_id: enterance.plane_id,
         entry_id,
-        game_mode_type: plane.plane_type as u32,
-        pbfgagecpcd: plane.world_id,
+        pjbjelcgkof: plane.plane_type as u32,
+        nnfgkelcban: 1,
+        lgflfajffjl: 1,
+        game_mode_type: 1,
         ..Default::default()
     };
 
     let lineup_info = AvatarJson::to_lineup_info(&json.lineups);
     let player_pos = MotionInfo {
         // rot
-        eiaoiankefd: Some(Vector {
-            baimdminomk: 0,
-            bemlopmcgch: position.rot_y,
-            bagloppgnpb: 0,
+        rot: Some(Vector {
+            x: 0,
+            y: position.rot_y,
+            z: 0,
         }),
         // pos
-        aomilajjmii: Some(Vector {
-            baimdminomk: position.x,
-            bemlopmcgch: position.y,
-            bagloppgnpb: position.z,
+        pos: Some(Vector {
+            x: position.x,
+            y: position.y,
+            z: position.z,
         }),
     };
 
@@ -305,7 +304,7 @@ async fn load_scene(
     let mut monster_entity_id = 30_000;
 
     for (group_id, group) in &group_config.group_items {
-        let mut group_info = Dhkacjhaoid {
+        let mut group_info = SceneGroupInfo {
             state: 0,
             group_id: *group_id,
             ..Default::default()
@@ -365,7 +364,7 @@ async fn load_scene(
                 entity_id: npc_entity_id,
                 motion: Some(npc_position.to_motion()),
                 npc: Some(SceneNpcInfo {
-                    egeneneoadj: npc.npcid,
+                    npc_id: npc.npcid,
                     ..Default::default()
                 }),
                 ..Default::default()
@@ -403,11 +402,11 @@ async fn load_scene(
             group_info.entity_list.push(info);
         }
 
-        scene_info.chhmmbdhjpg.push(group_info);
+        scene_info.scene_group_list.push(group_info);
     }
 
     // load player entity
-    let mut player_group = Dhkacjhaoid {
+    let mut player_group = SceneGroupInfo {
         state: 0,
         group_id: 0,
         ..Default::default()
@@ -418,16 +417,16 @@ async fn load_scene(
             entity_id: (*slot) + 1,
             motion: Some(MotionInfo {
                 // pos
-                aomilajjmii: Some(Vector {
-                    baimdminomk: json.position.x,
-                    bemlopmcgch: json.position.y,
-                    bagloppgnpb: json.position.z,
+                pos: Some(Vector {
+                    x: json.position.x,
+                    y: json.position.y,
+                    z: json.position.z,
                 }),
                 // rot
-                eiaoiankefd: Some(Vector {
-                    baimdminomk: 0,
-                    bemlopmcgch: json.position.rot_y,
-                    bagloppgnpb: 0,
+                rot: Some(Vector {
+                    x: 0,
+                    y: json.position.rot_y,
+                    z: 0,
                 }),
             }),
             actor: Some(SceneActorInfo {
@@ -439,13 +438,13 @@ async fn load_scene(
             ..Default::default()
         })
     }
-    scene_info.chhmmbdhjpg.push(player_group);
+    scene_info.scene_group_list.push(player_group);
 
     if _save {
         session
             .send(
                 CMD_ENTER_SCENE_BY_SERVER_SC_NOTIFY,
-                Jdokmmikidp {
+                EnterSceneByServerScNotify {
                     scene: Some(scene_info.clone()),
                     lineup: Some(lineup_info),
                     ..Default::default()

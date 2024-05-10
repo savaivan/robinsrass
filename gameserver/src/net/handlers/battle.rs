@@ -13,8 +13,9 @@ pub async fn on_start_cocoon_stage_cs_req(
     let mut battle_info = SceneBattleInfo {
         stage_id: player.battle_config.stage_id,
         logic_random_seed: rand::thread_rng().gen::<u32>(),
-        // battle_id: 1,
-        kimmjioaodn: player.battle_config.cycle_count,
+        battle_id: 1,
+        // cleheggdkal: player.battle_config.cycle_count, // wave
+        ohfkoaahoib: player.battle_config.cycle_count, // wave
         ..Default::default()
     };
 
@@ -91,21 +92,21 @@ pub async fn on_start_cocoon_stage_cs_req(
 
     // pf score object
     if player.battle_config.battle_type == BattleType::PF {
-        let mut battle_target = Hbinjjdphdo::default();
-        battle_target.bgnpebhgelb.push(BattleTarget {
+        let mut battle_target = Cnngaoldopi::default();
+        battle_target.fdfcmhbhnmc.push(BattleTarget {
             id: 10001,
             progress: 0,
             ..Default::default()
         });
 
-        battle_info.ichnbmifjdi.insert(1, battle_target);
+        battle_info.jelkfckaonl.insert(1, battle_target);
         for i in 2..=4 {
-            battle_info.ichnbmifjdi.insert(i, Hbinjjdphdo::default());
+            battle_info.jelkfckaonl.insert(i, Cnngaoldopi::default());
         }
-        battle_info.ichnbmifjdi.insert(
+        battle_info.jelkfckaonl.insert(
             5,
-            Hbinjjdphdo {
-                bgnpebhgelb: vec![
+            Cnngaoldopi {
+                fdfcmhbhnmc: vec![
                     BattleTarget {
                         id: 2001,
                         progress: 0,
@@ -121,11 +122,21 @@ pub async fn on_start_cocoon_stage_cs_req(
         );
     }
 
+    // Apocalyptic Shadow
+    if player.battle_config.battle_type == BattleType::AS {
+        let mut battle_target = Cnngaoldopi::default();
+        battle_target.fdfcmhbhnmc.push(BattleTarget {
+            id: 10002,
+            progress: 0,
+            ..Default::default()
+        });
+    }
+
     //  SU
     if player.battle_config.battle_type == BattleType::SU {
-        battle_info.mpobegkcikn.push(Npjnkmmjfdf {
-            chgdaadjepi: player.battle_config.path_resonance_id,
-            status: Some(Agpocmnmmdi {
+        battle_info.ldkhpbclcbd.push(Mnnlfkgifmc {
+            ejilnblflii: player.battle_config.path_resonance_id,
+            status: Some(Fmaobdmmcjb {
                 sp: Some(AmountInfo {
                     cur_amount: 10_000,
                     max_amount: 10_000,
@@ -167,14 +178,18 @@ pub async fn on_pve_battle_result_cs_req(
 }
 
 // scene cast skill cs req
-pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) -> Result<()> {
+pub async fn on_scene_cast_skill_cs_req(
+    session: &mut PlayerSession,
+    request: &SceneCastSkillCsReq,
+) -> Result<()> {
     let player = tools::JsonData::load().await;
 
     let mut battle_info = SceneBattleInfo {
         stage_id: player.battle_config.stage_id,
         logic_random_seed: rand::thread_rng().gen::<u32>(),
-        // battle_id: 1,
-        kimmjioaodn: player.battle_config.cycle_count,
+        battle_id: 1,
+        // cleheggdkal: player.battle_config.cycle_count, // wave
+        ohfkoaahoib: player.battle_config.cycle_count, // wave
         ..Default::default()
     };
 
@@ -251,21 +266,21 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
 
     // pf score object
     if player.battle_config.battle_type == BattleType::PF {
-        let mut battle_target = Hbinjjdphdo::default();
-        battle_target.bgnpebhgelb.push(BattleTarget {
+        let mut battle_target = Cnngaoldopi::default();
+        battle_target.fdfcmhbhnmc.push(BattleTarget {
             id: 10001,
             progress: 0,
             ..Default::default()
         });
 
-        battle_info.ichnbmifjdi.insert(1, battle_target);
+        battle_info.jelkfckaonl.insert(1, battle_target);
         for i in 2..=4 {
-            battle_info.ichnbmifjdi.insert(i, Hbinjjdphdo::default());
+            battle_info.jelkfckaonl.insert(i, Cnngaoldopi::default());
         }
-        battle_info.ichnbmifjdi.insert(
+        battle_info.jelkfckaonl.insert(
             5,
-            Hbinjjdphdo {
-                bgnpebhgelb: vec![
+            Cnngaoldopi {
+                fdfcmhbhnmc: vec![
                     BattleTarget {
                         id: 2001,
                         progress: 0,
@@ -281,11 +296,21 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
         );
     }
 
+    // Apocalyptic Shadow
+    if player.battle_config.battle_type == BattleType::AS {
+        let mut battle_target = Cnngaoldopi::default();
+        battle_target.fdfcmhbhnmc.push(BattleTarget {
+            id: 10002,
+            progress: 0,
+            ..Default::default()
+        });
+    }
+
     //  SU
     if player.battle_config.battle_type == BattleType::SU {
-        battle_info.mpobegkcikn.push(Npjnkmmjfdf {
-            chgdaadjepi: player.battle_config.path_resonance_id,
-            status: Some(Agpocmnmmdi {
+        battle_info.ldkhpbclcbd.push(Mnnlfkgifmc {
+            ejilnblflii: player.battle_config.path_resonance_id,
+            status: Some(Fmaobdmmcjb {
                 sp: Some(AmountInfo {
                     cur_amount: 10_000,
                     max_amount: 10_000,
@@ -298,15 +323,15 @@ pub async fn on_mpemgbdkigg(session: &mut PlayerSession, request: &Mpemgbdkigg) 
     // monsters
     battle_info.monster_wave_list = Monster::to_scene_monster_waves(&player.battle_config.monsters);
 
-    let mut resp = Ifiohnjlehh {
-        elgjckaejld: request.elgjckaejld,
+    let mut resp = SceneCastSkillScRsp {
+        jkdaceoekll: request.jkdaceoekll,
         retcode: 0,
-        pbgpinglheg: vec![],
+        diehcelekfj: vec![],
         ..Default::default()
     };
 
     let targets = request
-        .jpieajikioh
+        .igkjjpeealc
         .iter()
         .filter(|id| **id > 30_000 || **id < 1_000)
         .collect::<Vec<_>>();

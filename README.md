@@ -1,17 +1,19 @@
-# Supported Version: 2.1.51, 2.1.52, 2.1.53, 2.1.54, 2.1.55
+# Supported Version: 2.2.51
 Run the game by clicking run.bat file.
 
 Tool website: [https://freesr-tools.pages.dev](https://freesr-tools.pages.dev)
 
 Start battle by entering any calyx in the map, DON'T ATTACK THE ENEMIES, IT WON'T WORK (maybe)
 
-Some scenes might not loaded properly. If you stuck at loading screen, remove persistent file.
+Some scenes might not loaded properly. If you stuck at loading screen, remove `persistent` file.
 
 # RobinSR
-Original: [https://git.xeondev.com/reversedrooms/RobinSR/](https://git.xeondev.com/reversedrooms/RobinSR/)
+Original: 
+[https://git.xeondev.com/reversedrooms/RobinSR](https://git.xeondev.com/reversedrooms/RobinSR)
+[https://git.xeondev.com/reversedrooms/JadeSR](https://git.xeondev.com/reversedrooms/JadeSR)
 
 A Server emulator for the game [`Honkai: Star Rail`](https://hsr.hoyoverse.com/en-us/)
-![screenshot](https://git.xeondev.com/reversedrooms/RobinSR/raw/branch/master/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/amizing25/robinsr/main/screenshot.png)
 
 ## Installation
 
@@ -65,19 +67,5 @@ run the following in a terminal:
 ```
 
 ## Connecting
-[Get 2.2 beta client](https://bhrpg-prod.oss-accelerate.aliyuncs.com/client/beta/20240322124944_scfGE0xJXlWtoJ1r/StarRail_2.1.51.zip),
-replace [mhypbase.dll](https://git.xeondev.com/reversedrooms/RobinSR/raw/branch/master/mhypbase.dll) file in your game folder, it will redirect game traffic (and also disable in-game censorship)
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss
-what you would like to change, and why.
-
-## Bug Reports
-
-If you find a bug, please open an issue with as much detail as possible. If you
-can, please include steps to reproduce the bug.
-
-Bad issues such as "This doesn't work" will be closed immediately, be _sure_ to
-provide exact detailed steps to reproduce your bug. If it's hard to reproduce, try
-to explain it and write a reproducer as best as you can.
+[Get 2.2 beta client](https://bhrpg-prod.oss-accelerate.aliyuncs.com/client/beta/20240322124944_scfGE0xJXlWtoJ1r/StarRail_2.1.51.zip)
+Replace [mhypbase.dll](https://git.xeondev.com/reversedrooms/RobinSR/raw/branch/master/mhypbase.dll) file in your game folder, it will redirect game traffic (and also disable in-game censorship)

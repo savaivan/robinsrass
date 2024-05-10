@@ -32,35 +32,41 @@ pub async fn on_get_archive_data_cs_req(
         .send(
             CMD_GET_ARCHIVE_DATA_SC_RSP,
             GetArchiveDataScRsp {
-                archive_data: Some(ArchiveData::default()),
+                bkcflgbcjmi: Some(ArchiveData::default()),
                 retcode: 0,
             },
         )
         .await
 }
 
-pub async fn on_oakankcfbec(session: &mut PlayerSession, _: &Oakankcfbec) -> Result<()> {
+pub async fn on_gfmigicacfn(session: &mut PlayerSession, _: &Gfmigicacfn) -> Result<()> {
     // ?
     session
         .send(CMD_DRESS_RELIC_AVATAR_SC_RSP, Dummy::default())
         .await
 }
 
-pub async fn on_cnpajjnhfpa(session: &mut PlayerSession, _: &Cnpajjnhfpa) -> Result<()> {
+pub async fn on_nbmofdgfejk(session: &mut PlayerSession, _: &Nbmofdgfejk) -> Result<()> {
     // ?
     session
         .send(CMD_TAKE_OFF_RELIC_SC_RSP, Dummy::default())
         .await
 }
 
-pub async fn on_copkgioejac(session: &mut PlayerSession, _: &Copkgioejac) -> Result<()> {
+pub async fn on_dress_avatar_cs_req(
+    session: &mut PlayerSession,
+    _: &DressAvatarCsReq,
+) -> Result<()> {
     // ?
     session
         .send(CMD_DRESS_AVATAR_SC_RSP, Dummy::default())
         .await
 }
 
-pub async fn on_aafgmacgenl(session: &mut PlayerSession, _: &Aafgmacgenl) -> Result<()> {
+pub async fn on_take_off_equipment_cs_req(
+    session: &mut PlayerSession,
+    _: &TakeOffEquipmentCsReq,
+) -> Result<()> {
     // ?
     session
         .send(CMD_TAKE_OFF_EQUIPMENT_SC_RSP, Dummy::default())

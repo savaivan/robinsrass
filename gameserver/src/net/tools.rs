@@ -51,8 +51,8 @@ impl AvatarJson {
             } else {
                 0
             },
-            ojneijnggfo: 1712924677,
-            amafpakcckf: relics
+            first_met_timestamp: 1712924677,
+            equip_relic_list: relics
                 .iter()
                 .map(|v| v.to_equipment_relic_proto())
                 .collect::<Vec<_>>(),
@@ -153,8 +153,8 @@ impl AvatarJson {
         let mut lineup_info = LineupInfo {
             extra_lineup_type: ExtraLineupType::LineupNone.into(),
             name: "Squad 1".to_string(),
-            njjbfegnhjc: 5,
-            bpkggopoppf: 5,
+            mp: 5,
+            mp_max: 5,
             ..Default::default()
         };
 
@@ -197,7 +197,7 @@ impl Lightcone {
     pub fn to_equipment_proto(&self) -> Equipment {
         Equipment {
             base_avatar_id: self.equip_avatar,
-            imhlbinfhlh: self.equip_avatar,
+            cmmegdchmlb: self.equip_avatar,
             exp: 0,
             is_protected: false,
             level: self.level,
@@ -249,7 +249,7 @@ impl Relic {
     pub fn to_relic_proto(&self) -> proto::Relic {
         proto::Relic {
             base_avatar_id: self.equip_avatar,
-            imhlbinfhlh: self.equip_avatar,
+            cmmegdchmlb: self.equip_avatar,
             exp: 0,
             is_protected: false,
             level: self.level,
@@ -291,9 +291,9 @@ impl Relic {
 
     pub fn to_equipment_relic_proto(&self) -> EquipRelic {
         EquipRelic {
-            ipnhjoomhdm: self.relic_id % 10,
+            iaglgkpdloe: self.relic_id % 10,
             // ?
-            llepdadmfdo: 1 + self.internal_uid,
+            ekjochfepap: 1 + self.internal_uid,
         }
     }
 }
@@ -309,11 +309,11 @@ pub struct Monster {
 }
 
 impl Monster {
-    fn to_scene_monster_info(&self) -> SceneMonsterParam {
-        SceneMonsterParam {
+    fn to_scene_monster_info(&self) -> SceneMonsterData {
+        SceneMonsterData {
             monster_id: self.monster_id,
             max_hp: self.max_hp,
-            aiapcboelmg: self.max_hp,
+            jjhfeikbakk: self.max_hp,
         }
     }
 
@@ -324,9 +324,9 @@ impl Monster {
         }
 
         SceneMonsterWave {
-            iilhbcalikm: wave_index, // wave indexx??
+            imapolkmefn: wave_index, // wave indexx??
 
-            ejahmdkklbn: Some(Holldlkceof {
+            acpannfhach: Some(Kjfnknacfin {
                 // monster param
                 level: monsters.iter().map(|v| v.level).max().unwrap_or(95),
                 ..Default::default()
@@ -387,6 +387,7 @@ pub enum BattleType {
     Moc = 1,
     PF = 2,
     SU = 3,
+    AS = 4,
 }
 
 impl Default for BattleType {
@@ -462,16 +463,16 @@ impl Position {
     pub fn to_motion(&self) -> MotionInfo {
         MotionInfo {
             // rot
-            eiaoiankefd: Some(Vector {
-                baimdminomk: 0,
-                bemlopmcgch: self.rot_y,
-                bagloppgnpb: 0,
+            rot: Some(Vector {
+                x: 0,
+                y: self.rot_y,
+                z: 0,
             }),
             // pos
-            aomilajjmii: Some(Vector {
-                baimdminomk: self.x,
-                bemlopmcgch: self.y,
-                bagloppgnpb: self.z,
+            pos: Some(Vector {
+                x: self.x,
+                y: self.y,
+                z: self.z,
             }),
         }
     }

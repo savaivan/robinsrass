@@ -8,31 +8,31 @@ use crate::{
 
 use super::*;
 
-pub async fn on_nhfajfplkep(session: &mut PlayerSession, _: &Nhfajfplkep) -> Result<()> {
+pub async fn on_jhfffmnkcbf(session: &mut PlayerSession, _: &Jhfffmnkcbf) -> Result<()> {
     session
         .send(
             CMD_GET_FRIEND_LIST_INFO_SC_RSP,
-            Pbfkjlnnnim {
-                amgpdgdnlgd: vec![Leldmbjfheh {
-                    gpgdedmpjla: PlayingState::None.into(),
-                    cfmiklhjmle: Some(Alcoeanikil::default()),
-                    hiljemhhhnk: String::from("RobinSR"),
-                    kmclngophda: Some(Hcdpijbnijp {
+            Fmonbbgkfpp {
+                nffnphfnbph: vec![Pbbkojapeaj {
+                    jkmlmffobmi: PlayingState::None.into(),
+                    eejlmfccjnm: Some(Bhkoekppbaf::default()),
+                    ddnklblgmaa: String::from("RobinSR"),
+                    mkabddponma: Some(Mionicmdpaa {
                         uid: 727,
-                        mbdjcknimop: 3,
-                        igmaomgegaj: 1,
-                        gjlfhjlijon: 201008,
-                        jpajpffgnbi: 220005,
+                        platform: 3,
+                        mjbmlkimpnn: 1,
+                        dgojjmfnomj: 201008,
+                        kpiphlhfiib: 220005,
                         level: 70,
                         nickname: String::from("Server"),
-                        plmbeaaegak: vec![AssistSimpleInfo {
+                        oemkmkkhkde: vec![AssistSimpleInfo {
                             avatar_id: 1008,
                             level: 70,
                             ..Default::default()
                         }],
                         ..Default::default()
                     }),
-                    gjdiplfecfa: true,
+                    niekopdjolm: true,
                 }],
                 ..Default::default()
             },
@@ -40,20 +40,36 @@ pub async fn on_nhfajfplkep(session: &mut PlayerSession, _: &Nhfajfplkep) -> Res
         .await
 }
 
-pub async fn on_komknbijgpi(session: &mut PlayerSession, _: &Komknbijgpi) -> Result<()> {
+pub async fn on_pignjacjgdl(session: &mut PlayerSession, _: &Pignjacjgdl) -> Result<()> {
     session
         .send(
             CMD_GET_PRIVATE_CHAT_HISTORY_SC_RSP,
-            Ooibcglpnac {
-                pgofeopnpbm: vec![Bpifmdladdn {
-                    bdjoneohhpj: MsgType::CustomText.into(),
-                    phhhfhobhmk: cur_timestamp_ms(),
-                    fbelgjfhbkh: ":motorized_wheelchair:".to_string(),
-                    nokipdbhglc: 727,
-                    ..Default::default()
-                }],
-                fjbkleaflam: 727,
-                oligkfnjkma: 1337,
+            Hachagdjilp {
+                fepangjbmpa: vec![
+                    Gnbekokccfc {
+                        mgmicgabebd: MsgType::CustomText.into(),
+                        hkkkjdbgiao: cur_timestamp_ms(),
+                        anjfbjikchf: "'sync'".to_string(),
+                        befmkobhohp: 727,
+                        ..Default::default()
+                    },
+                    Gnbekokccfc {
+                        mgmicgabebd: MsgType::CustomText.into(),
+                        hkkkjdbgiao: cur_timestamp_ms(),
+                        anjfbjikchf: "'mc {mc_id}' mc_id can be set from 8001 to 8006".to_string(),
+                        befmkobhohp: 727,
+                        ..Default::default()
+                    },
+                    Gnbekokccfc {
+                        mgmicgabebd: MsgType::CustomText.into(),
+                        hkkkjdbgiao: cur_timestamp_ms(),
+                        anjfbjikchf: "available command:".to_string(),
+                        befmkobhohp: 727,
+                        ..Default::default()
+                    },
+                ],
+                cibgdjekbja: 727,  // from
+                ienomggikon: 1337, // to
                 ..Default::default()
             },
         )
@@ -61,22 +77,24 @@ pub async fn on_komknbijgpi(session: &mut PlayerSession, _: &Komknbijgpi) -> Res
 }
 
 // RecvMsgCsReq
-pub async fn on_bgfjcbbfiek(session: &mut PlayerSession, body: &Bgfjcbbfiek) -> Result<()> {
+pub async fn on_dgaiigecbee(session: &mut PlayerSession, body: &Dgaiigecbee) -> Result<()> {
     let mut json = JsonData::load().await;
-    if let Some((cmd, args)) = parse_command(&body.moiplammfad) {
+
+    if let Some((cmd, args)) = parse_command(&body.ajlhdpcjand) {
         match cmd {
             "sync" => {
                 sync_player(session, json).await?;
                 session
                     .send(
                         CMD_REVC_MSG_SC_NOTIFY,
-                        Kifdjbodlcc {
-                            pofomobijdg: body.pofomobijdg,
-                            kjdhmhgjdmc: body.kjdhmhgjdmc,
-                            moiplammfad: String::from("Inventory Synced"),
-                            bdjoneohhpj: body.bdjoneohhpj,
-                            aljhmlmnmhp: 727,
-                            djefnoaonkc: 1337,
+                        Klonpheafip {
+                            ggadmjhlomj: body.ggadmjhlomj.clone(),
+                            kokadficdfb: body.kokadficdfb,
+                            ajlhdpcjand: String::from("Inventory Synced"),
+                            mgmicgabebd: body.mgmicgabebd,
+                            ghojifhngmc: 727,  // from
+                            cmmildghfnl: 1337, // to
+                            nmfepfoojic: body.nmfepfoojic,
                         },
                     )
                     .await?;
@@ -113,13 +131,14 @@ pub async fn on_bgfjcbbfiek(session: &mut PlayerSession, body: &Bgfjcbbfiek) -> 
                 session
                     .send(
                         CMD_REVC_MSG_SC_NOTIFY,
-                        Kifdjbodlcc {
-                            pofomobijdg: body.pofomobijdg,
-                            kjdhmhgjdmc: body.kjdhmhgjdmc,
-                            moiplammfad: format!("Set MC to: {mc:#?}"),
-                            bdjoneohhpj: body.bdjoneohhpj,
-                            aljhmlmnmhp: 727,
-                            djefnoaonkc: 1337,
+                        Klonpheafip {
+                            ggadmjhlomj: body.ggadmjhlomj.clone(),
+                            kokadficdfb: body.kokadficdfb,
+                            ajlhdpcjand: format!("Set MC to: {mc:#?}"),
+                            mgmicgabebd: body.mgmicgabebd,
+                            ghojifhngmc: 727,
+                            cmmildghfnl: 1337,
+                            nmfepfoojic: body.nmfepfoojic,
                         },
                     )
                     .await?;
@@ -131,7 +150,7 @@ pub async fn on_bgfjcbbfiek(session: &mut PlayerSession, body: &Bgfjcbbfiek) -> 
     session
         .send(
             CMD_SEND_MSG_SC_RSP,
-            Jhickbdnnii {
+            Ckcjblcacof {
                 retcode: 0,
                 end_time: 0,
             },
@@ -153,9 +172,9 @@ async fn sync_player(session: &mut PlayerSession, json: JsonData) -> Result<()> 
     session
         .send(
             CMD_PLAYER_SYNC_SC_NOTIFY,
-            Eckkajafean {
-                lminpcphbfp: (2000..3500).collect(),
-                oglioehgbal: (1..2000).collect(),
+            Pkbehgpoein {
+                ipnkigfoikl: (2000..3500).collect(),
+                idgakomjiio: (1..2000).collect(),
                 ..Default::default()
             },
         )
@@ -164,8 +183,8 @@ async fn sync_player(session: &mut PlayerSession, json: JsonData) -> Result<()> 
     session
         .send(
             CMD_PLAYER_SYNC_SC_NOTIFY,
-            Eckkajafean {
-                fihplpphfme: Some(Abcekhjbnmp {
+            Pkbehgpoein {
+                enfnppagfpp: Some(Gkjoiapbbne {
                     avatar_list: json
                         .avatars
                         .values()
@@ -180,7 +199,7 @@ async fn sync_player(session: &mut PlayerSession, json: JsonData) -> Result<()> 
     session
         .send(
             CMD_PLAYER_SYNC_SC_NOTIFY,
-            Eckkajafean {
+            Pkbehgpoein {
                 relic_list: json.relics.iter().map(|v| v.to_relic_proto()).collect(),
                 equipment_list: json
                     .lightcones
@@ -195,8 +214,8 @@ async fn sync_player(session: &mut PlayerSession, json: JsonData) -> Result<()> 
     session
         .send(
             CMD_PLAYER_SYNC_SC_NOTIFY,
-            Eckkajafean {
-                fihplpphfme: Some(Abcekhjbnmp {
+            Pkbehgpoein {
+                enfnppagfpp: Some(Gkjoiapbbne {
                     avatar_list: json
                         .avatars
                         .values()

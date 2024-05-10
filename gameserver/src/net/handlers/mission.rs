@@ -141,20 +141,20 @@ pub async fn on_get_mission_status_cs_req(
         retcode: 0,
         finished_main_mission_id_list: FINISHED_MAIN_MISSIONS.to_vec(),
         sub_mission_status_list: body
-            .main_mission_id_list
+            .sub_mission_id_list
             .iter()
             .map(|id| Mission {
                 id: *id,
-                progress: 0,
+                progress: 1,
                 status: MissionStatus::MissionFinish.into(),
             })
             .collect(),
         mission_event_status_list: body
-            .mission_event_id_list
+            .main_mission_id_list
             .iter()
             .map(|id| Mission {
                 id: *id,
-                progress: 0,
+                progress: 1,
                 status: MissionStatus::MissionFinish.into(),
             })
             .collect(),
