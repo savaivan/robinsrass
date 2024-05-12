@@ -124,12 +124,14 @@ pub async fn on_start_cocoon_stage_cs_req(
 
     // Apocalyptic Shadow
     if player.battle_config.battle_type == BattleType::AS {
-        let mut battle_target = Cnngaoldopi::default();
-        battle_target.fdfcmhbhnmc.push(BattleTarget {
-            id: 10002,
-            progress: 0,
-            ..Default::default()
-        });
+        let battle_target = Cnngaoldopi {
+            fdfcmhbhnmc: vec![BattleTarget {
+                id: 90005,
+                progress: 0,
+                ..Default::default()
+            }],
+        };
+        battle_info.jelkfckaonl.insert(1, battle_target);
     }
 
     //  SU
@@ -298,12 +300,14 @@ pub async fn on_scene_cast_skill_cs_req(
 
     // Apocalyptic Shadow
     if player.battle_config.battle_type == BattleType::AS {
-        let mut battle_target = Cnngaoldopi::default();
-        battle_target.fdfcmhbhnmc.push(BattleTarget {
-            id: 10002,
-            progress: 0,
-            ..Default::default()
-        });
+        let battle_target = Cnngaoldopi {
+            fdfcmhbhnmc: vec![BattleTarget {
+                id: 90005,
+                progress: 0,
+                ..Default::default()
+            }],
+        };
+        battle_info.jelkfckaonl.insert(1, battle_target);
     }
 
     //  SU
