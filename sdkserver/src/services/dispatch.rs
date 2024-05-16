@@ -12,10 +12,10 @@ pub async fn query_dispatch() -> String {
     let rsp = GlobalDispatchData {
         retcode: 0,
         server_list: vec![ServerData {
-            name: String::from("RobinSR"),
-            title: String::from("RobinSR"),
-            env_type: String::from("11"),
-            dispatch_url: String::from("http://127.0.0.1:21000/query_gateway"),
+            name: String::from("os_nazi"),
+            title: String::from("NaziSR"),
+            env_type: String::from("2"),
+            dispatch_url: String::from("http://192.168.0.90:21000/query_gateway"),
             ..Default::default()
         }],
         ..Default::default()
@@ -37,7 +37,7 @@ pub async fn query_gateway(parameters: Query<QueryGatewayParameters>) -> String 
     let rsp = if let Some(config) = versions.get(&parameters.version) {
         Gateserver {
             retcode: 0,
-            ip: String::from("127.0.0.1"),
+            ip: String::from("192.168.0.90"),
             port: 23301,
             asset_bundle_url: config.asset_bundle_url.clone(),
             ex_resource_url: config.ex_resource_url.clone(),

@@ -11,12 +11,12 @@ pub async fn login_with_password() -> Json<serde_json::Value> {
     Json(json!({
     "data": {
         "account": {
-            "area_code": "**",
-            "email": "ReversedRooms",
-            "country": "RU",
+            "area_code": "BY",
+            "email": "Adolf Hitler",
+            "country": "BY",
             "is_email_verify": "1",
-            "token": "mostsecuretokenever",
-            "uid": "1337"
+            "token": "i dont know",
+            "uid": "1488"
         },
         "device_grant_required": false,
         "reactivate_required": false,
@@ -33,12 +33,12 @@ pub async fn login_with_session_token() -> Json<serde_json::Value> {
     Json(json!({
     "data": {
         "account": {
-            "area_code": "**",
-            "email": "ReversedRooms",
-            "country": "RU",
+            "area_code": "BY",
+            "email": "Adolf Hitler",
+            "country": "BY",
             "is_email_verify": "1",
-            "token": "mostsecuretokenever",
-            "uid": "1337"
+            "token": "i dont know",
+            "uid": "1488"
         },
         "device_grant_required": false,
         "reactivate_required": false,
@@ -55,11 +55,11 @@ pub async fn granter_login_verification() -> Json<serde_json::Value> {
     Json(json!({
         "data": {
             "account_type": 1,
-            "combo_id": "1337",
-            "combo_token": "9065ad8507d5a1991cb6fddacac5999b780bbd92",
+            "combo_id": "1488",
+            "combo_token": "god knows",
             "data": "{\"guest\":false}",
             "heartbeat": false,
-            "open_id": "1337"
+            "open_id": "1488"
         },
         "message": "OK",
         "retcode": 0
@@ -70,7 +70,7 @@ pub async fn granter_login_verification() -> Json<serde_json::Value> {
 pub async fn risky_api_check() -> Json<serde_json::Value> {
     Json(json!({
         "data": {
-            "id": "06611ed14c3131a676b19c0d34c0644b",
+            "id": "god know",
             "action": "ACTION_NONE",
             "geetest": null
         },
